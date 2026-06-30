@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KeyExtractor UI Design</title>
+  <style>
+    :root {
+      --bg: #f3f3f3;
+      --window: #f9f9f9;
+      --surface: #ffffff;
+      --line: #dadada;
+      --line-strong: #c7c7c7;
+      --text: #1f1f1f;
+      --muted: #666666;
+      --accent: #0067c0;
+      --accent-hover: #005a9e;
+      --danger: #c42b1c;
+      --shadow: 0 16px 38px rgba(0, 0, 0, 0.18);
+      --radius: 8px;
+      --control-radius: 4px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Microsoft YaHei UI", "Segoe UI", Arial, sans-serif;
+      font-size: 12px;
+    }
+
+    .board {
+      width: 1440px;
+      height: 1200px;
+      padding: 40px;
+      display: grid;
+      grid-template-columns: 760px 560px;
+      grid-template-rows: 520px 560px;
+      gap: 40px;
+      background: linear-gradient(180deg, #f7f7f7 0%, #eeeeee 100%);
+    }
+
+    .stage {
+      position: relative;
+    }
+
+    .caption {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .window,
+    .dialog {
+      background: var(--window);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .titlebar {
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-left: 14px;
+      color: var(--text);
+      font-size: 13px;
+      background: #fbfbfb;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .window-controls {
+      display: flex;
+      height: 36px;
+    }
+
+    .window-control {
+      width: 46px;
+      display: grid;
+      place-items: center;
+      color: #333333;
+      font-size: 13px;
+    }
+
+    .window-control.close {
+      font-size: 15px;
+    }
+
+    .main-window {
+      width: 720px;
+      height: 480px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content {
+      padding: 12px;
+      background: var(--window);
+      flex: 1;
+      min-height: 0;
+    }
+
+    .tree {
+      height: 100%;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .tree-head,
+    .tree-row {
+      display: grid;
+      grid-template-columns: 1fr 120px 120px;
+      align-items: center;
+    }
+
+    .tree-head {
+      height: 32px;
+      color: #333333;
+      font-weight: 600;
+      background: #f7f7f7;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .tree-head div,
+    .tree-row div {
+      padding: 0 10px;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      border-right: 1px solid #eeeeee;
+    }
+
+    .tree-head div:last-child,
+    .tree-row div:last-child {
+      border-right: 0;
+      text-align: right;
+    }
+
+    .tree-row {
+      height: 28px;
+      border-bottom: 1px solid #f0f0f0;
+      background: #ffffff;
+    }
+
+    .tree-row.selected {
+      background: #eaf3ff;
+      outline: 1px solid #b8d8ff;
+      outline-offset: -1px;
+    }
+
+    .indent {
+      padding-left: 30px !important;
+    }
+
+    .statusbar {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      border-top: 1px solid var(--line);
+      background: #fbfbfb;
+    }
+
+    button {
+      height: 30px;
+      min-width: 80px;
+      padding: 0 14px;
+      border: 1px solid #bfbfbf;
+      border-radius: var(--control-radius);
+      background: #ffffff;
+      color: var(--text);
+      font: inherit;
+    }
+
+    .primary {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    .menu {
+      position: absolute;
+      left: 312px;
+      top: 198px;
+      width: 168px;
+      padding: 4px;
+      background: #ffffff;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
+      z-index: 5;
+    }
+
+    .menu-item {
+      height: 30px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      border-radius: 4px;
+    }
+
+    .menu-item:first-child {
+      background: #f2f7ff;
+    }
+
+    .dialog-stack {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .dialog {
+      position: relative;
+      width: 460px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .dialog.narrow {
+      width: 380px;
+    }
+
+    .dialog.progress {
+      width: 420px;
+    }
+
+    .dialog.wide {
+      width: 520px;
+    }
+
+    .dialog-body {
+      padding: 20px;
+      background: var(--window);
+    }
+
+    .field-label {
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .path-row {
+      display: grid;
+      grid-template-columns: 1fr 72px;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .input {
+      height: 30px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      background: #ffffff;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--control-radius);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bottom-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+    }
+
+    .box {
+      width: 14px;
+      height: 14px;
+      border: 1px solid #777777;
+      border-radius: 2px;
+      background: #ffffff;
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 8px 10px;
+      margin-bottom: 18px;
+    }
+
+    .info-grid .label {
+      color: var(--muted);
+    }
+
+    .progress-line {
+      display: grid;
+      grid-template-columns: 1fr 42px;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .bar {
+      height: 8px;
+      border-radius: 4px;
+      background: #d8d8d8;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      width: 68%;
+      height: 100%;
+      background: var(--accent);
+    }
+
+    .current-file {
+      margin-bottom: 22px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .dialog-text {
+      margin: 0 0 14px;
+      line-height: 1.5;
+    }
+
+    .password-input {
+      margin-bottom: 10px;
+      font-size: 15px;
+      letter-spacing: 2px;
+    }
+
+    .error-line {
+      margin: 8px 0 14px;
+      color: var(--danger);
+    }
+
+    .file-name {
+      margin: 0 0 14px;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .path-info {
+      display: grid;
+      grid-template-columns: 54px 1fr;
+      gap: 8px 10px;
+      margin-bottom: 18px;
+    }
+
+    .path-info .label {
+      color: var(--muted);
+    }
+
+    .overwrite-buttons {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .overwrite-buttons button {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .error-object {
+      margin-bottom: 14px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <main class="board">
+    <section class="stage">
+      <p class="caption">主窗口 / 文件树 / 状态栏 / 右键菜单</p>
+      <div class="window main-window">
+        <div class="titlebar">
+          <span>KeyExtractor — archive.zip</span>
+          <div class="window-controls">
+            <div class="window-control">─</div>
+            <div class="window-control close">×</div>
+          </div>
+        </div>
+        <div class="content">
+          <div class="tree">
+            <div class="tree-head">
+              <div>名称</div>
+              <div>类型</div>
+              <div>解压后大小</div>
+            </div>
+            <div class="tree-row">
+              <div>📁 docs/</div>
+              <div>文件夹</div>
+              <div></div>
+            </div>
+            <div class="tree-row">
+              <div class="indent">📄 readme.md</div>
+              <div>Markdown</div>
+              <div>1.2 KB</div>
+            </div>
+            <div class="tree-row selected">
+              <div>📁 src/</div>
+              <div>文件夹</div>
+              <div></div>
+            </div>
+            <div class="tree-row">
+              <div class="indent">📄 main.cpp</div>
+              <div>C++ 源文件</div>
+              <div>3.5 KB</div>
+            </div>
+            <div class="tree-row">
+              <div class="indent">📄 utils.h</div>
+              <div>C 头文件</div>
+              <div>1.1 KB</div>
+            </div>
+          </div>
+        </div>
+        <div class="statusbar">
+          <span>13 个文件，2 个文件夹 | 解压后大小 2.3 MB</span>
+          <button class="primary">全部解压</button>
+        </div>
+      </div>
+      <div class="menu">
+        <div class="menu-item">打开</div>
+        <div class="menu-item">解压选中项</div>
+      </div>
+    </section>
+
+    <section class="stage dialog-stack">
+      <div>
+        <p class="caption">解压目录选择对话框</p>
+        <div class="dialog">
+          <div class="titlebar">
+            <span>解压到...</span>
+            <div class="window-controls"><div class="window-control close">×</div></div>
+          </div>
+          <div class="dialog-body">
+            <div class="field-label">目标路径：</div>
+            <div class="path-row">
+              <div class="input">C:\Users\...\archive</div>
+              <button>更改</button>
+            </div>
+            <div class="bottom-line">
+              <div class="check"><span class="box">✓</span><span>解压后打开目录</span></div>
+              <button class="primary">解压</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="caption">解压进度对话框</p>
+        <div class="dialog progress">
+          <div class="titlebar">
+            <span>正在解压...</span>
+            <div class="window-controls"><div class="window-control close">×</div></div>
+          </div>
+          <div class="dialog-body">
+            <div class="info-grid">
+              <div class="label">来源:</div><div>archive.zip</div>
+              <div class="label">目标:</div><div>C:\Users\...\archive</div>
+            </div>
+            <div class="progress-line">
+              <div class="bar"><div class="bar-fill"></div></div>
+              <div>68%</div>
+            </div>
+            <div class="current-file">当前文件: src/main.cpp</div>
+            <div class="actions"><button>取消解压</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stage dialog-stack">
+      <div>
+        <p class="caption">密码输入对话框</p>
+        <div class="dialog narrow">
+          <div class="titlebar">
+            <span>需要密码</span>
+            <div class="window-controls"><div class="window-control close">×</div></div>
+          </div>
+          <div class="dialog-body">
+            <p class="dialog-text">archive.zip 已加密，请输入密码：</p>
+            <div class="input password-input">••••••••</div>
+            <div class="check" style="margin-bottom: 20px;"><span class="box"></span><span>显示密码</span></div>
+            <div class="actions">
+              <button class="primary">确定</button>
+              <button>取消</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="caption">密码错误状态</p>
+        <div class="dialog narrow">
+          <div class="titlebar">
+            <span>需要密码</span>
+            <div class="window-controls"><div class="window-control close">×</div></div>
+          </div>
+          <div class="dialog-body">
+            <p class="dialog-text">archive.zip 已加密，请输入密码：</p>
+            <div class="input password-input">••••</div>
+            <div class="error-line">密码错误，请重试。</div>
+            <div class="check" style="margin-bottom: 20px;"><span class="box"></span><span>显示密码</span></div>
+            <div class="actions">
+              <button class="primary">确定</button>
+              <button>取消</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stage dialog-stack">
+      <div>
+        <p class="caption">文件覆盖对话框</p>
+        <div class="dialog wide">
+          <div class="titlebar">
+            <span>确认文件替换</span>
+            <div class="window-controls"><div class="window-control close">×</div></div>
+          </div>
+          <div class="dialog-body">
+            <p class="dialog-text">目标已包含同名文件：</p>
+            <p class="file-name">readme.md</p>
+            <div class="path-info">
+              <div class="label">源文件:</div><div>archive.zip \ readme.md</div>
+              <div class="label">目标文件:</div><div>C:\...\archive\readme.md</div>
+            </div>
+            <div class="overwrite-buttons">
+              <button class="primary">替换</button>
+              <button>跳过</button>
+              <button>重命名</button>
+              <button>取消</button>
+            </div>
+            <div class="check"><span class="box"></span><span>对所有冲突执行相同操作</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="caption">错误提示对话框</p>
+        <div class="dialog narrow">
+          <div class="titlebar">
+            <span>解压失败</span>
+            <div class="window-controls"><div class="window-control close">×</div></div>
+          </div>
+          <div class="dialog-body">
+            <p class="dialog-text">无法解压以下文件：</p>
+            <div class="error-object">archive.zip</div>
+            <p class="dialog-text">原因：文件已损坏或格式不受支持。</p>
+            <div class="actions"><button class="primary">确定</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
