@@ -1,0 +1,31 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "windows-vcpkg",
+      "displayName": "Windows x64 vcpkg",
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "${sourceDir}/build/windows-vcpkg",
+      "cacheVariables": {
+        "CMAKE_MAKE_PROGRAM": "D:/workspace/vcpkg/downloads/tools/ninja-1.13.2-windows/ninja.exe",
+        "CMAKE_TOOLCHAIN_FILE": "D:/workspace/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_TARGET_TRIPLET": "x64-windows",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "windows-vcpkg-debug",
+      "displayName": "Windows x64 vcpkg Debug",
+      "configurePreset": "windows-vcpkg",
+      "configuration": "Debug"
+    },
+    {
+      "name": "windows-vcpkg-release",
+      "displayName": "Windows x64 vcpkg Release",
+      "configurePreset": "windows-vcpkg",
+      "configuration": "Release"
+    }
+  ]
+}

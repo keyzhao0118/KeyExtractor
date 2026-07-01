@@ -1,0 +1,5 @@
+{
+  "cmake.cmakePath": "D:/workspace/vcpkg/downloads/tools/cmake-4.3.3-windows/cmake-4.3.3-windows-x86_64/bin/cmake.exe",
+  "cmake.configurePreset": "windows-vcpkg",
+  "cmake.buildPreset": "windows-vcpkg-debug"
+}
