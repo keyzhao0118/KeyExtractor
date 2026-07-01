@@ -3,12 +3,12 @@
   "configurePresets": [
     {
       "name": "windows-vcpkg",
-      "displayName": "Windows x64 vcpkg",
-      "generator": "Ninja Multi-Config",
-      "binaryDir": "${sourceDir}/build/windows-vcpkg",
+      "displayName": "Windows x64 vcpkg (VS2026)",
+      "generator": "Visual Studio 18 2026",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/windows-vs2026",
       "cacheVariables": {
-        "CMAKE_MAKE_PROGRAM": "D:/workspace/vcpkg/downloads/tools/ninja-1.13.2-windows/ninja.exe",
-        "CMAKE_TOOLCHAIN_FILE": "D:/workspace/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
         "VCPKG_TARGET_TRIPLET": "x64-windows",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }
@@ -16,13 +16,13 @@
   ],
   "buildPresets": [
     {
-      "name": "windows-vcpkg-debug",
+      "name": "windows-vs2026-debug",
       "displayName": "Windows x64 vcpkg Debug",
       "configurePreset": "windows-vcpkg",
       "configuration": "Debug"
     },
     {
-      "name": "windows-vcpkg-release",
+      "name": "windows-vs2026-release",
       "displayName": "Windows x64 vcpkg Release",
       "configurePreset": "windows-vcpkg",
       "configuration": "Release"
