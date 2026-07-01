@@ -1,0 +1,21 @@
+{
+  "name": "keyextractor",
+  "version-string": "0.1.0",
+  "dependencies": [
+    {
+      "name": "qtbase",
+      "default-features": false,
+      "features": [
+        "widgets",
+        "network",
+        "sql",
+        "sql-sqlite",
+        "openssl",
+        "windeployqt"
+      ]
+    },
+    "qtsvg",
+    "qtimageformats",
+    "7zip"
+  ]
+}
