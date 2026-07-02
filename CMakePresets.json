@@ -1,4 +1,4 @@
-{
+﻿{
   "version": 6,
   "configurePresets": [
     {
@@ -10,7 +10,7 @@
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
         "VCPKG_TARGET_TRIPLET": "x64-windows",
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+        "VCPKG_MANIFEST_MODE": "OFF"
       }
     }
   ],

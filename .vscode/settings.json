@@ -1,4 +1,0 @@
-{
-  "cmake.configurePreset": "windows-vcpkg",
-  "cmake.buildPreset": "windows-vs2026-debug"
-}
