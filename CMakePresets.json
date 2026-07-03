@@ -2,8 +2,8 @@
   "version": 6,
   "configurePresets": [
     {
-      "name": "windows-vcpkg",
-      "displayName": "Windows x64 vcpkg (VS2026)",
+      "name": "windows-default",
+      "displayName": "Windows x64(VS2026)",
       "generator": "Visual Studio 18 2026",
       "architecture": "x64",
       "binaryDir": "${sourceDir}/build/windows-vs2026",
@@ -17,14 +17,14 @@
   "buildPresets": [
     {
       "name": "windows-vs2026-debug",
-      "displayName": "Windows x64 vcpkg Debug",
-      "configurePreset": "windows-vcpkg",
+      "displayName": "Windows x64(VS2026) Debug",
+      "configurePreset": "windows-default",
       "configuration": "Debug"
     },
     {
       "name": "windows-vs2026-release",
-      "displayName": "Windows x64 vcpkg Release",
-      "configurePreset": "windows-vcpkg",
+      "displayName": "Windows x64(VS2026) Release",
+      "configurePreset": "windows-default",
       "configuration": "Release"
     }
   ]
