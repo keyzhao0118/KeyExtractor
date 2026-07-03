@@ -31,11 +31,15 @@ set(_windeployqt_debug "${_qt_tools_dir}/windeployqt.debug.bat")
 
 if(EXISTS "${_windeployqt_release}")
     message(STATUS "windeployqt.exe found: ${_windeployqt_release}")
+    if(EXISTS "${_windeployqt_debug}")
+        set(_windeployqt "$<IF:$<CONFIG:Debug>,${_windeployqt_debug},${_windeployqt_release}>")
+    else()
+        set(_windeployqt "${_windeployqt_release}")
+    endif()
+
     add_custom_command(TARGET KeyExtractor POST_BUILD
         COMMAND
-            "$<IF:$<AND:$<CONFIG:Debug>,$<BOOL:$<PATH_EXISTS:${_windeployqt_debug}>>>,${_windeployqt_debug},${_windeployqt_release}>"
-            $<$<CONFIG:Debug>:--debug>
-            $<$<CONFIG:Release>:--release>
+            "${_windeployqt}"
             --no-translations
             "$<TARGET_FILE:KeyExtractor>"
         COMMENT "Deploying Qt runtime files"
