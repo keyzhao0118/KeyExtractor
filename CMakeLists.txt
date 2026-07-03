@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.25)
 
 project(KeyExtractor VERSION 0.1.0 LANGUAGES CXX)
 
@@ -7,11 +7,28 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+find_package(7zip CONFIG REQUIRED)
 
 qt_standard_project_setup()
 
 qt_add_executable(KeyExtractor
     src/main.cpp
+    src/core/ArchiveItem.h
+    src/core/ArchiveListWorker.cpp
+    src/core/ArchiveListWorker.h
+    src/engine/InStreamWrapper.cpp
+    src/engine/InStreamWrapper.h
+    src/engine/SevenZipEngine.cpp
+    src/engine/SevenZipEngine.h
+    src/engine/SevenZipGuids.cpp
+    src/ui/FileTreeModel.cpp
+    src/ui/FileTreeModel.h
+    src/ui/MainWindow.cpp
+    src/ui/MainWindow.h
+)
+target_include_directories(KeyExtractor
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 target_link_libraries(KeyExtractor
@@ -19,8 +36,17 @@ target_link_libraries(KeyExtractor
         Qt6::Core
         Qt6::Gui
         Qt6::Widgets
+        7zip::7zip
 )
 
+
+add_custom_command(TARGET KeyExtractor POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "$<TARGET_FILE:7zip::7zip>"
+        "$<TARGET_FILE_DIR:KeyExtractor>"
+    COMMENT "Copying 7zip.dll to output directory"
+    VERBATIM
+)
 set_target_properties(KeyExtractor PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
