@@ -24,3 +24,23 @@ target_link_libraries(KeyExtractor
 set_target_properties(KeyExtractor PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
+
+set(_qt_tools_dir "$ENV{VCPKG_ROOT}/installed/${VCPKG_TARGET_TRIPLET}/tools/Qt6/bin")
+set(_windeployqt_release "${_qt_tools_dir}/windeployqt.exe")
+set(_windeployqt_debug "${_qt_tools_dir}/windeployqt.debug.bat")
+
+if(EXISTS "${_windeployqt_release}")
+    message(STATUS "windeployqt.exe found: ${_windeployqt_release}")
+    add_custom_command(TARGET KeyExtractor POST_BUILD
+        COMMAND
+            "$<IF:$<AND:$<CONFIG:Debug>,$<BOOL:$<PATH_EXISTS:${_windeployqt_debug}>>>,${_windeployqt_debug},${_windeployqt_release}>"
+            $<$<CONFIG:Debug>:--debug>
+            $<$<CONFIG:Release>:--release>
+            --no-translations
+            "$<TARGET_FILE:KeyExtractor>"
+        COMMENT "Deploying Qt runtime files"
+        VERBATIM
+    )
+else()
+    message(WARNING "windeployqt.exe was not found at ${_windeployqt_release}. Install qtbase with the windeployqt feature.")
+endif()
