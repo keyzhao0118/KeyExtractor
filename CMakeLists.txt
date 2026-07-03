@@ -40,7 +40,6 @@ if(EXISTS "${_windeployqt_release}")
     add_custom_command(TARGET KeyExtractor POST_BUILD
         COMMAND
             "${_windeployqt}"
-            --no-translations
             "$<TARGET_FILE:KeyExtractor>"
         COMMENT "Deploying Qt runtime files"
         VERBATIM

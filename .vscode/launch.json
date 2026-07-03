@@ -1,0 +1,26 @@
+﻿{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug KeyExtractor (MSVC + Qt6)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/windows-vs2026/Debug/KeyExtractor.exe",
+      "args": [],
+      "cwd": "${workspaceFolder}/build/windows-vs2026/Debug",
+      "visualizerFile": "${workspaceFolder}/.vscode/qt6-vscode.natvis",
+      "showDisplayString": true
+    },
+    {
+      "name": "Debug KeyExtractor --extract (MSVC + Qt6)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/windows-vs2026/Debug/KeyExtractor.exe",
+      "args": ["--extract"],
+      "cwd": "${workspaceFolder}/build/windows-vs2026/Debug",
+      "visualizerFile": "${workspaceFolder}/.vscode/qt6-vscode.natvis",
+      "showDisplayString": true
+    }
+  ]
+}
+
